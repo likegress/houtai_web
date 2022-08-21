@@ -31,11 +31,19 @@
           prefix-icon="el-icon-lock"
           @keyup.enter.native="handleLogin"
         >
-          <!-- <svg-icon
-            slot="prefix"
-            icon-class="password"
-            class="el-input__icon input-icon"
-          /> -->
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="code">
+        <el-input
+          v-model="loginForm.code"
+          type="code"
+          auto-complete="off"
+          placeholder="验证码"
+          prefix-icon="el-icon-s-order"
+        >
+          <template v-slot:append>
+            <div class="svgImg"  v-html="svgImg" @click="toggleCode"></div>
+          </template>
         </el-input>
       </el-form-item>
       <el-checkbox
@@ -65,17 +73,19 @@
 </template>
 
 <script>
-import HTTP from "@/api/api";
+import instance from "@/api/api";
 import debounce from "@/plugin/debounce";
 export default {
   name: "login",
   data() {
     return {
       loginForm: {
-        username: "",
-        password: "",
+        username: "administrator",
+        password: "Qwe123",
         rememberMe: false,
+        code: "",
       },
+      svgImg:"", //验证码图片
       loginRules: {
         username: [{ required: true, message: "请输入账号", trigger: "blur" }],
         password: [
@@ -92,19 +102,22 @@ export default {
   created() {
     //给登录做防抖
     this.debounceFn = debounce(this.onLogin, 2000);
-    //记住密码
-    
+    //请求验证码
+    this.toggleCode()
   },
   methods: {
     async onLogin() {
-        //功能函数
-      
-      let { username, password } = this.loginForm;
-      const {data:{data,message,status}} = await HTTP.post("/login",{username,password})
-      console.log(data,message,status);
-      if(status == 200 && message == 'success'){
+      //功能函数
+      let { username, password, code} = this.loginForm;
+      const {data:{errcode,errmsg}} = await instance.post("/login",{username,password,code})
+      console.log(errcode,errmsg);
+      if(errcode == 0 && errmsg == 'login ok'){
         this.loading = true
-        let token = data.token
+        let token = "12123www"
+        //请求管理员的权限
+        // let {data:{data:{permissions}}} = await instance.get("/who")
+        // console.log(res);
+        // localStorage.setItem("permissions",JSON.stringify(permissions))
         localStorage.setItem('token',token)
         this.$message({
           showClose: true,
@@ -124,16 +137,21 @@ export default {
         });
       }
     },
-    handleLogin() {
-        this.debounceFn()
+    //请求验证码方法
+    toggleCode(){
+      instance.get("/captcha").then(({ data:{data} }) => {
+      // console.log(data);
+      this.svgImg = data
+    });
     },
-   
+    handleLogin() {
+      this.debounceFn();
+    },
   },
-
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .login {
   display: flex;
   justify-content: center;
@@ -194,4 +212,8 @@ export default {
 .login-code-img {
   height: 38px;
 }
+svg {
+  height: 33px !important;
+}
+
 </style>

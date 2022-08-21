@@ -77,6 +77,7 @@ export default {
     //点击按钮更改表格title 的状态
     btnFn(row) {
       row.flag = !row.flag;
+      // 让空字段保存 当前的 title
       row.titleOrigin = row.title
     },
     btnFn2(row) {
@@ -88,7 +89,7 @@ export default {
         type: 'success'
       });
     },
-    //点击取消按钮
+    //点击取消按钮,让保存字段的数据给原来的title
     cancelEdit(row) {
       row.flag = !row.flag;
       row.title = row.titleOrigin

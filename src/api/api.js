@@ -26,9 +26,9 @@ function endLoading() {
 }
 
 const instance = axios.create({
-    baseURL:"/api",
-    timeout:5000
-})
+  baseURL: "/api",
+  // timeout: 5000,
+});
 
 // 请求拦截
 instance.interceptors.request.use(config=>{
@@ -43,10 +43,10 @@ instance.interceptors.request.use(config=>{
 // 相应拦截
 instance.interceptors.response.use(response=>{
     // 对响应数据做点什么
-    
-    setTimeout(()=>{
-        endLoading();
-    },300)
+    endLoading();
+    // setTimeout(()=>{
+        
+    // },300)
     return response;
 },(error)=>{
   return Promise.reject(error)

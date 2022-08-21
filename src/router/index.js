@@ -47,6 +47,7 @@ const routes = [
         name: "xiajia",
         meta: { pathName: "商品下架" },
         component: layout,
+        //
         children: [
           {
             path: "todu",
@@ -54,6 +55,12 @@ const routes = [
             meta: { pathName: "toduList" },
             component: () => import("@/views/layout/ToduListView.vue"),
           },
+          // {
+          //   path: "quxian",
+          //   name: "quxian",
+          //   meta: { pathName: "quxian" },
+          //   component: () => import("@/views/layout/ToduListView.vue"),
+          // },
         ],
       },
     ],
