@@ -45,20 +45,20 @@
       width="30%"
       :show-close="false"
     >
-      <el-form :model="formData" :rules="rules" ref="form">
-        <el-form-item prop="oldPassword">
+      <el-form :model="formData" label-width="100px" :rules="rules" ref="form">
+        <el-form-item label="修改密码" prop="oldPassword">
           <el-input
             v-model="formData.oldPassword"
             placeholder="修改密码"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="newPassword">
+        <el-form-item label="旧密码" prop="newPassword">
           <el-input
             v-model="formData.newPassword"
             placeholder="旧密码"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="new2Password">
+        <el-form-item label="新密码" prop="new2Password">
           <el-input
             v-model="formData.new2Password"
             placeholder="新密码"
@@ -83,16 +83,21 @@ export default {
   },
   data() {
     const validator = ({ field }, value, callback) => {
-      // console.log(field,value);
-      if (field == "newPassword" && this.formData.newPassword != "") {
-        this.$refs.form.validateField("new2Password");
-      }
-      if (field == "new2Password") {
-        if (value != this.formData.newPassword) {
-          callback(new Error("新密码和旧密码输入不一样"));
-        } else {
-          callback()
-        }
+      // // console.log(field,value);
+      // if (field == "newPassword" && this.formData.newPassword != "") {
+      //   this.$refs.form.validateField("new2Password");
+      // }
+      // if (field == "new2Password") {
+      //   if (value != this.formData.newPassword) {
+      //     callback(new Error("新密码和旧密码输入不一样"));
+      //   } else {
+      //     callback();
+      //   }
+      // }
+      if (value != this.formData.newPassword) {
+        callback(new Error("新密码和旧密码输入不一样"));
+      } else {
+        callback();
       }
     };
     return {
@@ -110,7 +115,6 @@ export default {
         ],
         newPassword: [
           { required: true, message: "请输入新密码", trigger: "blur" },
-          { validator, trigger: "blur" },
         ],
         new2Password: [
           { required: true, message: "请确定新密码", trigger: "blur" },
@@ -124,15 +128,21 @@ export default {
   methods: {
     //提交修改密码
     savePass() {
-      this.$refs.form.validate((valid=true) => {
+      this.$refs.form.validate((valid = true) => {
         // console.log(valid);
         // this.valid = valid || false;
         // //验证不通过无法关闭
-        if(!valid )return
-        console.log(valid);
-        this.dialogVisible = false
+        // if (!valid) return;
+        // console.log(valid);
+        if (valid) {
+          console.log(valid);
+          this.dialogVisible = false;
+          this.$message({
+            type:"success",
+            message:"修改密码成功"
+          })
+        }
       });
-
     },
     //取消关闭窗口
     closeFn() {

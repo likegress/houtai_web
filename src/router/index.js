@@ -52,15 +52,15 @@ const routes = [
           {
             path: "todu",
             name: "todu",
-            meta: { pathName: "toduList" },
+            meta: { pathName: "角色管理" },
             component: () => import("@/views/layout/ToduListView.vue"),
           },
-          // {
-          //   path: "quxian",
-          //   name: "quxian",
-          //   meta: { pathName: "quxian" },
-          //   component: () => import("@/views/layout/ToduListView.vue"),
-          // },
+          {
+            path: "role",
+            name: "role",
+            meta: { pathName: "用户管理" },
+            component: () => import("@/views/layout/Role.vue"),
+          },
         ],
       },
     ],

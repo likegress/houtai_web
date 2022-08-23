@@ -22,10 +22,21 @@
         >
         </el-option>
       </el-select>
-      <el-button size="small" type="primary" v-if="refresh" icon="el-icon-refresh" @click.prevent="refreshFn"
-        >重置</el-button>
-      <el-button size="small" type="primary" icon="el-icon-plus" @click.prevent="add"
-        >添加</el-button>
+      <el-button
+        size="small"
+        type="primary"
+        v-if="refresh"
+        icon="el-icon-refresh"
+        @click.prevent="refreshFn"
+        >重置</el-button
+      >
+      <el-button
+        size="small"
+        type="primary"
+        icon="el-icon-plus"
+        @click.prevent="add"
+        >添加</el-button
+      >
     </div>
     <el-table
       :cell-style="cellStyle"
@@ -150,7 +161,7 @@ export default {
   },
   data() {
     return {
-      refresh:false,
+      refresh: false,
       searchInfo: {
         title: "",
         number: "",
@@ -350,13 +361,13 @@ export default {
       } = await instance.post("/add", { ...this.addForm });
       this.tableData = tableArr;
     },
-    addCancelFn() {
-      this.incrementFrom = false;
+    addCancelFn(val) {
+      this.incrementFrom = val;
     },
 
     //添加确定
-    addConfirmFn() {
-      this.incrementFrom = false;
+    addConfirmFn(val) {
+      this.incrementFrom = val;
       this.addFn().then(() => {
         this.$message({
           type: "success",
@@ -411,17 +422,16 @@ export default {
         this.tableData = table.filter((i) => i.star == optionVal);
         this.loading = false;
       }, 300);
-      this.refresh = true
+      this.refresh = true;
     },
     // 点击重置按钮
-    refreshFn(){
+    refreshFn() {
       let table = JSON.parse(localStorage.getItem("tableArr"));
-      this.tableData = table
-      this.refresh = false
+      this.tableData = table;
+      this.refresh = false;
     },
     //搜索标题
     changeIpt() {
-      
       this.loading = true;
       let { title } = this.searchInfo;
       let table = JSON.parse(localStorage.getItem("tableArr"));
