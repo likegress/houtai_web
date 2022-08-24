@@ -29,7 +29,7 @@
         <el-table-column label="操作" align="center" width="250">
           <template slot-scope="{ row }">
             <el-button size="mini" type="primary">编辑</el-button>
-            <el-button size="mini" type="danger">删除</el-button>
+            <el-button size="mini" type="danger" @click="del">删除</el-button>
             <el-button size="mini" type="warning" @click="authFn(row)"
               >授权</el-button
             >
@@ -122,6 +122,10 @@ export default {
       this.page = page - 1;
       this.getList();
     },
+    //删除
+    del(){
+      this.$message.error("你么有权限?")
+    }
   },
 };
 </script>

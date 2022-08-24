@@ -27,7 +27,7 @@
         <i class="el-icon-s-platform" @click="Full"></i>
         <el-dropdown @command="handleCommand">
           <img
-            src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
+            :src="$store.state.user.user.avatar"
             alt=""
             class="avatar"
           />
@@ -76,7 +76,7 @@
 <script>
 import Tags from "@/components/TagView.vue";
 import screenfull from "screenfull";
-
+import instance from "@/api/api";
 export default {
   components: {
     Tags,
@@ -138,9 +138,9 @@ export default {
           console.log(valid);
           this.dialogVisible = false;
           this.$message({
-            type:"success",
-            message:"修改密码成功"
-          })
+            type: "success",
+            message: "修改密码成功",
+          });
         }
       });
     },
@@ -157,8 +157,13 @@ export default {
     handleCommand(cmd) {
       //退出登录
       if (cmd == "logout") {
-        localStorage.removeItem("token");
-        this.$router.push("/login");
+        instance.post("/logout").then((data) => {
+          if (!data.errcode) {
+            // localStorage.removeItem("token");
+            this.$message.success("退出成功");
+            this.$router.push("/login");
+          }
+        });
       } else if (cmd == "user") {
         // 修改密码
         this.dialogVisible = true;

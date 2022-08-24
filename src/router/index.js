@@ -1,9 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import NProgress from 'nprogress'   // 导入 nprogress
+import NProgress from "nprogress"; // 导入 nprogress
 import "nprogress/nprogress.css";
 import layout from "@/views/layout/shopLayout.vue";
-NProgress.configure({ showSpinner: false })   // 显示右上角螺旋加载提示
+import store from "../store";
+NProgress.configure({ showSpinner: false }); // 显示右上角螺旋加载提示
 
 Vue.use(VueRouter);
 
@@ -61,6 +62,12 @@ const routes = [
             meta: { pathName: "用户管理" },
             component: () => import("@/views/layout/Role.vue"),
           },
+          {
+            path: "product",
+            name: "product",
+            meta: { pathName: "商品管理" },
+            component: () => import("@/views/layout/Product.vue"),
+          },
         ],
       },
     ],
@@ -70,24 +77,31 @@ const routes = [
 const router = new VueRouter({
   routes,
 });
-
-router.beforeEach((to, from, next) => {
-   NProgress.start()   // 开启进度条
+router.beforeEach(async (to, from, next) => {
+  NProgress.start(); // 开启进度条
+  next();
   if (to.name == "login") {
     // 登录界面不设权限
     next();
   } else {
     // 非登录界面设置权限
-    let token = localStorage.getItem("token");    
-    if (token) {
-      // 有权限
-      next();
+    // let token = localStorage.getItem("token");
+    if (document.cookie.includes("seec_shop")) {
+      //获取权限数组
+      let pass = store.state.user.user.permissions.length > 0;
+      if (!pass) pass = await store.dispatch("user/getUser");
+      if (pass) {
+        next();
+      } else {
+        next("/login");
+      }
     } else {
       // 没有权限
       next("/login");
     }
   }
 });
+
 router.afterEach((to, from) => {
   NProgress.done();
 });

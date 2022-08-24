@@ -2,7 +2,7 @@
   <el-row>
     <el-col>
       <el-menu
-        default-active="2"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
@@ -36,6 +36,10 @@
           <el-menu-item index="/home/xiajia/role">
             <i class="el-icon-s-check"></i>
             <span slot="title">用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/xiajia/product">
+            <i class="el-icon-s-check"></i>
+            <span slot="title">商品管理</span>
           </el-menu-item>
         </el-submenu>
       </el-menu>

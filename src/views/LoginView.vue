@@ -6,7 +6,8 @@
       :rules="loginRules"
       class="login-form"
     >
-      <h3 class="title">东兴市智慧化管理平台</h3>
+      <OwlLogin :password="closeEye" />
+      <h3 class="title">梦溪后台管理系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -30,6 +31,8 @@
           placeholder="密码"
           prefix-icon="el-icon-lock"
           @keyup.enter.native="handleLogin"
+          @focus="closeEye = true"
+          @blur="closeEye = false"
         >
         </el-input>
       </el-form-item>
@@ -41,8 +44,10 @@
           placeholder="验证码"
           prefix-icon="el-icon-s-order"
         >
-          <template v-slot:append>
-            <div class="svgImg"  v-html="svgImg" @click="toggleCode"></div>
+          <template #append>
+            <el-tooltip content="点击刷新" placement="top">
+              <div class="svgImg" v-html="svgImg" @click="toggleCode"></div>
+            </el-tooltip>
           </template>
         </el-input>
       </el-form-item>
@@ -62,11 +67,11 @@
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div style="float: right" v-if="register">
+        <!-- <div style="float: right" v-if="register">
           <router-link class="link-type" :to="'/register'"
             >立即注册</router-link
           >
-        </div>
+        </div> -->
       </el-form-item>
     </el-form>
   </div>
@@ -74,9 +79,15 @@
 
 <script>
 import instance from "@/api/api";
-import debounce from "@/plugin/debounce";
+// import debounce from "@/plugin/debounce";
+//猫头鹰动画组件
+import OwlLogin from "@/components/OwlLogin";
+
 export default {
   name: "login",
+  components: {
+    OwlLogin,
+  },
   data() {
     return {
       loginForm: {
@@ -85,67 +96,70 @@ export default {
         rememberMe: false,
         code: "",
       },
-      svgImg:"", //验证码图片
+      closeEye: false, //控制猫头鹰的眼睛
+      svgImg: "", //验证码图片
       loginRules: {
         username: [{ required: true, message: "请输入账号", trigger: "blur" }],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { pattern: /\d{1,}/, message: "请输入纯数字密码", trigger: "blur" },
-        ],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       register: "",
-      loading: false,
+      loading: false, //load过度动画
       debounceFn: null,
     };
   },
 
   created() {
     //给登录做防抖
-    this.debounceFn = debounce(this.onLogin, 2000);
+    // this.debounceFn = debounce(this.onLogin, 2000);
     //请求验证码
-    this.toggleCode()
+    this.toggleCode();
   },
   methods: {
-    async onLogin() {
+    onLogin() {
       //功能函数
-      let { username, password, code} = this.loginForm;
-      const {data:{errcode,errmsg}} = await instance.post("/login",{username,password,code})
-      console.log(errcode,errmsg);
-      if(errcode == 0 && errmsg == 'login ok'){
-        this.loading = true
-        let token = "12123www"
-        //请求管理员的权限
-        // let {data:{data:{permissions}}} = await instance.get("/who")
-        // console.log(res);
-        // localStorage.setItem("permissions",JSON.stringify(permissions))
-        localStorage.setItem('token',token)
-        this.$message({
-          showClose: true,
-          message: '恭喜你，登陆成功',
-          type: 'success',
-          duration:1000,
-          onClose:()=>{
-            this.$router.push('/home')
-            this.loading = true
+      if (this.loading) return;
+      this.$refs.loginForm.validate(async (valid) => {
+        if (valid) {
+          this.loading = true;
+          let { username, password, code } = this.loginForm;
+          const {
+            data: { errcode, errmsg },
+          } = await instance.post("/login", { username, password, code });
+          console.log(errcode, errmsg);
+          if (errcode == 0 && errmsg == "login ok") {
+            let token = "12123www";
+            localStorage.setItem("token", token);
+            this.$message({
+              showClose: true,
+              message: "恭喜你，登陆成功",
+              type: "success",
+              duration: 500,
+              onClose: () => {
+                this.$router.push("/home");
+                this.loading = true;
+              },
+            });
+          } else {
+            this.loading = false;
+            this.$message({
+              showClose: true,
+              message: `${(errcode, errmsg)}`,
+              type: "error",
+            });
           }
-        });
-      }else {
-        this.$message({
-          showClose: true,
-          message: '登陆失败',
-          type: 'error'
-        });
-      }
+        }
+      });
     },
     //请求验证码方法
-    toggleCode(){
-      instance.get("/captcha").then(({ data:{data} }) => {
-      // console.log(data);
-      this.svgImg = data
-    });
+    toggleCode() {
+      instance.get("/captcha").then(({ data: { data } }) => {
+        // console.log(data);
+        this.svgImg = data;
+      });
     },
     handleLogin() {
-      this.debounceFn();
+      this.onLogin();
     },
   },
 };
@@ -171,6 +185,7 @@ export default {
   background: #ffffff;
   width: 400px;
   padding: 25px 25px 5px 25px;
+  position: relative;
   .el-input {
     height: 38px;
     input {
@@ -215,5 +230,4 @@ export default {
 svg {
   height: 33px !important;
 }
-
 </style>

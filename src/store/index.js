@@ -1,6 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import shop from "@/store/modules/shop"
+import user from "@/store/modules/user"
 import createPersistedState from "vuex-persistedstate";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -31,14 +34,20 @@ export default new Vuex.Store({
       state.routes.splice(index, 1);
     },
   },
-  modules: {},
-  plugins: [createPersistedState({
-    storage: window.sessionStorage,
-    reducer(val){
-      return {
-        //只储存state下的isCollapse
-        isCollapse: val.isCollapse,
-      };
-    }
-  })],
+  //模块化
+  modules: {
+    shop,
+    user,
+  },
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+      reducer(val) {
+        return {
+          //只储存state下的isCollapse
+          isCollapse: val.isCollapse,
+        };
+      },
+    }),
+  ],
 });

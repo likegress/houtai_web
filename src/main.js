@@ -26,8 +26,13 @@ Vue.use(VueLazyload, {
   loading: require("@/assets/404_images/404.png"),
   error: require("@/assets/404_images/404_cloud.png"),
 });
-
-
+Vue.mixin({
+  methods: {
+    is(permissions) {
+      return permissions.some((i) => store.getters["user/permissions"].includes(i));
+    },
+  },
+});
 Vue.config.productionTip = false;
 
 

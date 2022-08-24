@@ -25,8 +25,8 @@
         </template>
       </el-tree>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="onCancel">取消</el-button>
-        <el-button @click="onConfirm" type="primary">确定</el-button>
+        <el-button @click.prevent="onCancel">取消</el-button>
+        <el-button @click.prevent="onConfirm" type="primary">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -52,16 +52,16 @@ export default {
   watch: {
     value(v) {
       //当开关改变的时候
-      console.log(v);
+      // console.log(v);
       if (!v) return;
       this.getRolePermissions();
     },
-    rolePermissions(){
+    rolePermissions() {
       this.show = false;
-      this.$nextTick(()=>{
-        this.show = true
-      })
-    }
+      this.$nextTick(() => {
+        this.show = true;
+      });
+    },
   },
   created() {
     //获取树形控件数据
@@ -82,10 +82,9 @@ export default {
     },
     //获取显示的权限列表
     getRolePermissions() {
-      console.log(this.id);
       instance.get("/role/detail?id=" + this.id).then(({ data }) => {
         this.rolePermissions = (data.data || {}).permissions || [];
-        console.log(this.rolePermissions);
+        // console.log(this.rolePermissions);
       });
     },
     //取消
@@ -94,21 +93,23 @@ export default {
       this.$emit("input", false);
     },
     //确定
-    async onConfirm() {
+    onConfirm() {
       //获取选中的控件节点
-      const permissions = this.$refs.tree.getCheckedKeys();
-      console.log(permissions);
+      let permissions = this.$refs.tree.getCheckedKeys(true);
+      console.log(permissions, this.id);
       //把角色的权限请求接口给后台
-      const data = await instance.post("/role/set", {
-        id: this.id,
-        permissions,
-      });
-      if(!data.errcode){ //为0 成功
-          //弹窗成功信息
-          this.$message.success("角色授权成功")
-          //关闭弹窗
-          this.onCancel();
-      }
+      instance
+        .post("/role/set", {
+          id: this.id,
+          permissions,
+        })
+        .then((data) => {
+          console.log(data);
+          if (!data.errcode) {
+            this.$message.success("角色授权成功");
+            this.onCancel();
+          }
+        });
     },
   },
 };
