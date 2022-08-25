@@ -11,13 +11,12 @@
       <el-select
         size="small"
         v-model="searchInfo.optionVal"
-        placeholder="评价几颗星星"
         @change="selectStar"
       >
         <el-option
           v-for="item in searchInfo.options"
-          :key="item.label"
-          :label="item.label"
+          :key="item.value"
+          :label="item.value"
           :value="item.label"
         >
         </el-option>
@@ -114,10 +113,9 @@
     <!-- 修改业务的弹窗 -->
     <MyDialog
       :form="form"
-      :dialogFormVisible="dialogFormVisible"
+      :dialogFormVisible.sync="dialogFormVisible"
       :formLabelWidth="formLabelWidth"
       @confirmFn_my="confirmFn"
-      @my_cancel="cancelFn"
       @updateStar="uStar"
       ref="updateDia"
     />
@@ -167,23 +165,23 @@ export default {
         number: "",
         options: [
           {
-            value: "选项1",
+            value: 1,
             label: "1",
           },
           {
-            value: "选项2",
+            value: 2,
             label: "2",
           },
           {
-            value: "选项3",
+            value: 3,
             label: "3",
           },
           {
-            value: "选项3",
+            value: 4,
             label: "4",
           },
           {
-            value: "选项3",
+            value: 5,
             label: "5",
           },
         ],
@@ -429,6 +427,7 @@ export default {
       let table = JSON.parse(localStorage.getItem("tableArr"));
       this.tableData = table;
       this.refresh = false;
+      this.searchInfo.optionVal = "";
     },
     //搜索标题
     changeIpt() {

@@ -7,7 +7,7 @@
       clearable
       @clear="search"
     ></el-input>
-    <el-select size="mini" v-model="formData.category_id" @change="search">
+    <el-select size="mini" v-model="formData.category_id" @change="searchFn">
       <el-option
         v-for="d in categoryList"
         :key="d.id"
@@ -15,7 +15,7 @@
         :label="d.name"
       ></el-option>
     </el-select>
-    <el-select size="mini" v-model="formData.status" @change="search">
+    <el-select size="mini" v-model="formData.status" @change="searchFn">
       <el-option label="全部状态" :value="0"></el-option>
       <el-option label="未提交" :value="1"></el-option>
       <el-option label="待审核" :value="2"></el-option>
@@ -39,15 +39,18 @@
 
 <script>
 export default {
-  data() {
-    return {
-      formData: {
-        name: "",
-        category_id: 0,
-        status: 0,
-      },
-    };
+  props: {
+    formData: Object,
   },
+  // data() {
+  //   return {
+  //     formData: {
+  //       name: "",
+  //       category_id: 0,
+  //       status: 0,
+  //     },
+  //   };
+  // },
   methods: {
     //搜索
     search() {
@@ -55,12 +58,16 @@ export default {
     },
     //重置
     reset() {
-      this.formData = {
+      this.$emit("update:formData", {
         name: "",
         category_id: 0,
         status: 0,
-      };
-      this.$emit("search", this.formData);
+      });
+      this.$emit("reset");
+    },
+    //把数据formData双向绑定
+    searchFn() {
+      this.$emit("update:formData", this.formData);
     },
   },
   computed: {

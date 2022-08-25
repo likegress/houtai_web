@@ -43,6 +43,7 @@
           auto-complete="off"
           placeholder="验证码"
           prefix-icon="el-icon-s-order"
+          @keydown.enter.native="handleLogin"
         >
           <template #append>
             <el-tooltip content="点击刷新" placement="top">

@@ -19,8 +19,8 @@
       </template>
     </pro-table>
 
-    <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form>
-    <!-- <pro-form :list="formList" v-model="formData"></pro-form> -->
+    <!-- <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form> -->
+    <pro-form :list="formList" v-model="formData"></pro-form>
 
  </div>
 </template>
@@ -28,6 +28,7 @@
 <script>
 import instance from "@/api/api";
 export default {
+  
   data() {
     return {
       list: [

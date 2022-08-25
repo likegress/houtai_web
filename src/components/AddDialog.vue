@@ -1,6 +1,12 @@
 <template>
   <div>
-    <el-dialog title="添加新用户" :visible="incrementFrom" @close="addCancelFn">
+    <el-dialog
+      title="添加新用户"
+      :visible="incrementFrom"
+      @close="addCancelFn"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
       <el-form :model="addForm" :rules="addRules" ref="addForm">
         <el-form-item label="日期" :label-width="addFormVisible">
           <el-date-picker

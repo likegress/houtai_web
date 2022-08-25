@@ -23,7 +23,7 @@
             :key="o.value"
             :label="o.label"
             :value="o.value"
-          />
+          ></el-option>
         </el-select>
       </el-from-item>
 
@@ -44,7 +44,7 @@
 export default {
   props: {
     //el-form 的model
-    value: {
+    formData: {
       type: Object,
       default: () => ({}),
     },
@@ -53,27 +53,27 @@ export default {
       default: () => [],
     },
   },
-  data() {
-    return {
-      formData: {},
-    };
-  },
+  // data() {
+  //   return {
+  //     formData: {},
+  //   };
+  // },
 
-  created() {
-    this.formData = { ...this.value };
-  },
+  // created() {
+  //   this.formData = { ...this.value };
+  // },
   methods: {
     onChange() {
-      this.$emit("input", { ...this.formData });
+      this.$emit("input", this.formData);
     },
   },
   watch: {
-    value: {
-      deep: true,
-      handler() {
-        this.formData = { ...this.value };
-      },
-    },
+    // value: {
+    //   deep: true,
+    //   handler() {
+    //     this.formData = { ...this.value };
+    //   },
+    // },
     // formData: {
     //     deep: true,
     //     handler(){

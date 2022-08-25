@@ -1,6 +1,11 @@
 <template>
   <div class="product-list">
-    <product-search @search="search" @add="add" />
+    <product-search
+      @search="search"
+      @add="add"
+      @reset="reset"
+      :formData.sync="searchForm"
+    />
     <el-table
       ref="table"
       :data="list"
@@ -57,17 +62,20 @@
               type="primary"
               size="mini"
               v-if="is(['shop.product.update'])"
+              @click="edit(row.id)"
               >编辑</el-button
             >
             <el-button
               size="mini"
               type="danger"
+              @click="del(row.id)"
               v-if="is(['shop.product.delete'])"
               >删除</el-button
             >
             <el-button
               type="success"
               size="mini"
+              @click="submit(row.id)"
               v-if="
                 is(['shop.product.submit']) &&
                 (row.status === 1 || row.status === 4)
@@ -96,6 +104,13 @@
       >
       </el-pagination>
     </div>
+    <product-edit
+      :value.sync="show.edit"
+      :id="currentId"
+      v-if="is(['shop.product.update'])"
+    />
+    <!-- 删除按钮 -->
+    <!-- <product-approve /> -->
   </div>
 </template>
 
@@ -103,10 +118,13 @@
 import instance from "@/api/api";
 import ProductSearch from "./components/ProductSearch.vue";
 import ProductDetail from "./components/ProductDetail.vue";
+//编辑组件
+import ProductEdit from "./components/ProductEdit.vue";
 export default {
   components: {
     ProductSearch,
     ProductDetail,
+    ProductEdit,
   },
   data() {
     return {
@@ -114,7 +132,11 @@ export default {
       total: 0,
       page: 0, // 请求的当前页码
       limit: 10, //显示条数
-      searchForm: {},
+      searchForm: {
+        name: "",
+        category_id: 0,
+        status: 0,
+      },
       currentId: 0,
       statusTagArr: [null, "info", "", "success", "warning"],
       show: {
@@ -177,7 +199,57 @@ export default {
       this.page = 0;
       this.getList();
     },
+    //重置
+    reset() {
+      this.getList();
+    },
     add() {},
+    //修改
+    edit(id) {
+      // console.log(id);
+      this.currentId = id;
+      this.show.edit = true;
+    },
+    //删除
+    del(id) {
+      this.$confirm("信息删除不可恢复，确认操作？", {
+        confirmButtonText: "确认删除",
+        cancelButtonText: "暂不操作",
+        type: "warning",
+      }).then(() => {
+        instance
+          .post("/product/delete", {
+            id,
+          })
+          .then(({ data: { errcode } }) => {
+            console.log(errcode);
+            if (!errcode) {
+              this.$message.success("删除成功!");
+              this.getList();
+            }
+          });
+      });
+    },
+    submit(id) {
+      this.$confirm("商品信息已经添加无误，提交给上级审核，确认操作？", {
+        confirmButtonText: "确认提交",
+        cancelButtonText: "暂不操作",
+        type: "warning",
+      })
+        .then(() => {
+          instance
+            .post("/product/submit", {
+              id,
+            })
+            .then(({ errcode }) => {
+              if (!errcode) {
+                this.$message.success("提交成功!");
+                this.getList();
+              }
+            });
+        })
+        .catch(() => {});
+    },
   },
 };
 </script>
