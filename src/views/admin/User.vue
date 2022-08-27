@@ -20,15 +20,23 @@
     </pro-table>
 
     <!-- <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form> -->
-    <pro-form :list="formList" v-model="formData"></pro-form>
-
- </div>
+    <!-- <pro-form :list="formList" v-model="formData"></pro-form> -->
+    <div class="form">
+      <div v-for="d in form" :key="d.title">
+        <div>{{ d.title }}:</div>
+        <div v-for="(g, i) in d.arr" :key="i">
+          <span>{{ g.name }}</span>
+          <input type="checkbox" v-model="checkArr" :value="g.name" />
+        </div>
+      </div>
+    </div>
+    <button @click="submit">提交</button>
+  </div>
 </template>
 
 <script>
 import instance from "@/api/api";
 export default {
-  
   data() {
     return {
       list: [
@@ -85,6 +93,60 @@ export default {
           ],
         },
       ],
+      checkArr: [],
+      form: {
+        color: {
+          title: "颜色",
+          arr: [
+            {
+              name: "白色",
+              checked: false,
+            },
+            {
+              name: "黑色",
+              checked: false,
+            },
+            {
+              name: "蓝色",
+              checked: false,
+            },
+            {
+              name: "紫色",
+              checked: false,
+            },
+          ],
+        },
+        caizhi: {
+          title: "材质",
+          arr: [
+            {
+              name: "铁质",
+              checked: false,
+            },
+            {
+              name: "木质",
+              checked: false,
+            },
+            {
+              name: "竹质",
+              checked: false,
+            },
+          ],
+        },
+        container: {
+          title: "容量",
+          arr: [
+            {
+              name: "300ML",
+              checked: false,
+            },
+            {
+              name: "500ML",
+              checked: false,
+            },
+          ],
+        },
+      },
     };
   },
   created() {
@@ -97,6 +159,9 @@ export default {
     //   //   this.product = list;
     //   console.log(res);
     // },
+    submit() {
+      console.log(this.checkArr);
+    },
   },
 };
 </script>

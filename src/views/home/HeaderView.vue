@@ -26,11 +26,7 @@
       <div class="rightTip">
         <i class="el-icon-s-platform" @click="Full"></i>
         <el-dropdown @command="handleCommand">
-          <img
-            :src="$store.state.user.user.avatar"
-            alt=""
-            class="avatar"
-          />
+          <img :src="$store.state.user.user.avatar" alt="" class="avatar" />
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="user">修改密码</el-dropdown-item>
             <el-dropdown-item command="logout">退出</el-dropdown-item>
@@ -161,6 +157,7 @@ export default {
           if (!data.errcode) {
             // localStorage.removeItem("token");
             this.$message.success("退出成功");
+            this.$store.state.user.user.permissions = []
             this.$router.push("/login");
           }
         });

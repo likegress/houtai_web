@@ -1,4 +1,6 @@
 import instance from "@/api/api";
+import router,{authRoutes} from "@/router/index"
+import { deepTree, filterMenus } from "@/plugin/premissions";
 export default {
   state: {
     user: {
@@ -13,11 +15,15 @@ export default {
     userId: (state) => state.user.id,
     user: (state) => state.user,
     permissions: (state) => state.user.permissions,
+    menus:(state)=> state.menus
   },
   mutations: {
     setUser(state, v) {
       state.user = v;
     },
+    setMenus(state,v){
+      state.menus = v
+    }
   },
   actions: {
     getUser({ commit }) {
@@ -25,6 +31,12 @@ export default {
       return instance.get("/who").then(({data:data}) => {
         if (!data.errcode) {
           commit("setUser", data.data);
+        
+          const menu = deepTree(authRoutes)[0].children;
+          // console.log(menu);
+          const m = filterMenus(menu,data.data.permissions);
+          // authRoutes.forEach((r) => router.addRoute(r));
+          commit("setMenus", m);
           return true;
         } else {
           return false;

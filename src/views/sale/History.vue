@@ -33,7 +33,7 @@
 
 <script>
 import "animate.css";
-let timer = null;// 倒计时存储器
+let timer = null; // 倒计时存储器
 export default {
   data() {
     return {
@@ -60,7 +60,7 @@ export default {
         if (this.time <= 0) {
           clearInterval(timer);
           this.disabled = false;
-          this.time = 5
+          this.time = 5;
         }
       }, 1000);
     },

@@ -83,7 +83,7 @@ import instance from "@/api/api";
 // import debounce from "@/plugin/debounce";
 //猫头鹰动画组件
 import OwlLogin from "@/components/OwlLogin";
-
+import { resetRouter } from "@/router/index";
 export default {
   name: "login",
   components: {
@@ -129,6 +129,7 @@ export default {
           } = await instance.post("/login", { username, password, code });
           console.log(errcode, errmsg);
           if (errcode == 0 && errmsg == "login ok") {
+            // resetRouter();
             let token = "12123www";
             localStorage.setItem("token", token);
             this.$message({
@@ -137,18 +138,21 @@ export default {
               type: "success",
               duration: 500,
               onClose: () => {
-                this.$router.push("/home");
+                this.$router.push("/home/index");
                 this.loading = true;
               },
             });
           } else {
             this.loading = false;
-            this.$message({
-              showClose: true,
-              message: `${(errcode, errmsg)}`,
-              type: "error",
-            });
           }
+          // else {
+          //   this.loading = false;
+          //   this.$message({
+          //     showClose: true,
+          //     message: `${(errcode, errmsg)}`,
+          //     type: "error",
+          //   });
+          // }
         }
       });
     },

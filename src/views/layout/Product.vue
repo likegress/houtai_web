@@ -85,6 +85,7 @@
             <el-button
               type="success"
               size="mini"
+              @click="approve(row.id)"
               v-if="is(['shop.product.approve']) && row.status === 2"
               >审核</el-button
             >
@@ -104,13 +105,19 @@
       >
       </el-pagination>
     </div>
+    <!-- 编辑按钮 -->
     <product-edit
       :value.sync="show.edit"
       :id="currentId"
+      @confirm="confirm"
       v-if="is(['shop.product.update'])"
     />
-    <!-- 删除按钮 -->
-    <!-- <product-approve /> -->
+    <!-- 审核按钮 -->
+    <product-approve
+      :value.sync="show.approve"
+      :id="currentId"
+      @confirm="getList"
+    />
   </div>
 </template>
 
@@ -120,11 +127,14 @@ import ProductSearch from "./components/ProductSearch.vue";
 import ProductDetail from "./components/ProductDetail.vue";
 //编辑组件
 import ProductEdit from "./components/ProductEdit.vue";
+//审核组件
+import ProductApprove from "./components/ProductApprove.vue";
 export default {
   components: {
     ProductSearch,
     ProductDetail,
     ProductEdit,
+    ProductApprove,
   },
   data() {
     return {
@@ -249,6 +259,16 @@ export default {
             });
         })
         .catch(() => {});
+    },
+    //修改商品以后刷新列表
+    confirm() {
+      this.getList();
+    },
+    //审核
+    approve(id) {
+      this.currentId = id
+      this.show.approve = true
+      
     },
   },
 };

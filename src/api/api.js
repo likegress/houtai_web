@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Vue from "vue"
 //单独引入一个loading组件;
 import { Loading } from "element-ui";
 // 导入 NProgress 包对应的JS和CSS
@@ -43,10 +44,11 @@ instance.interceptors.request.use(config=>{
 // 相应拦截
 instance.interceptors.response.use(response=>{
     // 对响应数据做点什么
+    
     endLoading();
-    // setTimeout(()=>{
-        
-    // },300)
+    if (response.data.errcode > 0) {
+      Vue.prototype.$message.error(response.data.errmsg);
+    }
     return response;
 },(error)=>{
   return Promise.reject(error)

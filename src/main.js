@@ -7,18 +7,17 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import VueLazyload from "vue-lazyload";
 import axios from "axios";
-
+import { Plugin } from "vue-fragment";
 import ProTable from "@/components/ProTable.vue";
 import ProForm from "@/components/ProForm.vue";
 
 Vue.component("ProTable", ProTable);
 Vue.component("ProForm", ProForm);
-
+Vue.use(Plugin);
 //引入mock 拦截
 // console.log(process.env.VUE_APP_API);
-if(process.env.NODE_ENV === 'development'){
-  
-  require("./mock/mock")
+if (process.env.NODE_ENV === "development") {
+  require("./mock/mock");
 }
 Vue.use(ElementUI);
 Vue.prototype.axios = axios;
@@ -29,18 +28,19 @@ Vue.use(VueLazyload, {
 Vue.mixin({
   methods: {
     is(permissions) {
-      return permissions.some((i) => store.getters["user/permissions"].includes(i));
+      return permissions.some((i) =>
+        store.getters["user/permissions"].includes(i)
+      );
     },
   },
 });
 Vue.config.productionTip = false;
 
-
 new Vue({
   router,
   store,
   render: (h) => h(App),
-  beforeCreate(){
-    Vue.prototype.$eventBus = this
-  }
+  beforeCreate() {
+    Vue.prototype.$eventBus = this;
+  },
 }).$mount("#app");
