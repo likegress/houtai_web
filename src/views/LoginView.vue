@@ -139,7 +139,7 @@ export default {
               duration: 500,
               onClose: () => {
                 this.$router.push("/home/index");
-                this.loading = true;
+                this.loading = false;
               },
             });
           } else {

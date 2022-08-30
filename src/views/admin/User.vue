@@ -1,169 +1,170 @@
-<template>
-  <div class="layoutShop">
-    <pro-table :data="list" :columns="columns">
-      <template #name="{ row }">
-        {{ row.name }}
-        <span
-          v-if="row.name.includes('老')"
-          style="
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: green;
-          "
-        ></span>
-      </template>
-      <template #action>
-        <el-button type="primary">操作</el-button>
-      </template>
-    </pro-table>
+<template lang="pug">
+.user-list
+  .form
+    el-input(size="mini" v-model="username" placeholder="请输入用户名/账号" clearable @clear="search")
+    el-button(size="mini" type="primary" icon="el-icon-search" @click="search") 查找
+    el-button(size="mini" type="primary" icon="el-icon-plus" @click="add" v-if="is(['admin.user.create'])") 添加
+  el-table(:data="list" border style="width:100%" v-loading="loading" row-key="id")
+    el-table-column(prop="id" label="ID" width="100" align="center")
+    el-table-column(prop="username" label="用户名/账号" align="center")
+    el-table-column(label="头像" width="100" align="center")
+      template(slot-scope="{ row: { avatar } }")
+        .el-avatar(:style="{ 'background-image': `url(${avatar})` }")
+    el-table-column(label="角色列表" align="center")
+      template(slot-scope="{ row: { role_names } }")
+        el-tag(type="info" size="small" v-for="d in role_names" :key="d") {{ d }}
+    el-table-column(prop="tel" label="联系方式" align="center")
+      template(slot-scope="{ row: { tel, mail } }")
+        .contact
+          i.el-icon-phone
+          | {{ tel }}
+        .contact
+          i.el-icon-message
+          | {{ mail }}
+    el-table-column(label="操作" align="center" v-if="is(['admin.user.update','admin.user.delete','admin.user.password'])")
+      template(slot-scope="{ row: { id } }")
+        template(v-if="id > 1")
+          el-button(size="mini" type="primary" @click="edit(id)" v-if="is(['admin.user.update'])") 编辑
+          el-button(size="mini" type="danger" @click="del(id)" v-if="is(['admin.user.delete'])") 删除
+          el-button(size="mini" type="primary" @click="reset(id)" v-if="is(['admin.user.password'])") 重置密码
+  .b
+    el-pagination(
+      @size-change="onSizeChange"
+      @current-change="onPageChange"
+      :current-page="page + 1"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="limit"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+    )
 
-    <!-- <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form> -->
-    <!-- <pro-form :list="formList" v-model="formData"></pro-form> -->
-    <div class="form">
-      <div v-for="d in form" :key="d.title">
-        <div>{{ d.title }}:</div>
-        <div v-for="(g, i) in d.arr" :key="i">
-          <span>{{ g.name }}</span>
-          <input type="checkbox" v-model="checkArr" :value="g.name" />
-        </div>
-      </div>
-    </div>
-    <button @click="submit">提交</button>
-  </div>
+  user-add(v-model="show.add" @confirm="onConfirm" v-if="is(['admin.user.create'])")
+  user-edit(v-model="show.edit" :id="currentId" @confirm="getList" v-if="is(['admin.user.update'])")
+  user-reset(v-model="show.reset" :id="currentId" v-if="is(['admin.user.password'])")
 </template>
 
 <script>
+import UserAdd from "./components/UserAdd.vue";
+import UserEdit from "./components/UserEdit.vue";
+import UserReset from "./components/UserReset.vue";
 import instance from "@/api/api";
 export default {
+  components: { UserAdd, UserEdit, UserReset },
   data() {
     return {
-      list: [
-        {
-          id: 1,
-          name: "老王",
-        },
-        {
-          id: 2,
-          name: "小王",
-        },
-        {
-          id: 3,
-          name: "小李",
-        },
-      ],
-      columns: [
-        {
-          prop: "id",
-          label: "编号",
-        },
-        {
-          prop: "name",
-          label: "姓名",
-          slot: true,
-        },
-        {
-          prop: "action",
-          label: "操作",
-          slot: true,
-        },
-      ],
-      formData: {
-        username: "老王",
-        password: "123456",
-        city: "",
+      list: [],
+      total: 0,
+      page: 0,
+      limit: 10,
+      username: "",
+      loading: true,
+      show: {
+        add: false,
+        edit: false,
+        reset: false,
       },
-      formList: [
-        { type: "input", prop: "username", label: "用户名" },
-        { type: "input", prop: "password", label: "密码" },
-        {
-          type: "select",
-          prop: "city",
-          label: "城市",
-          optionList: [
-            {
-              label: "北京",
-              value: "bj",
-            },
-            {
-              label: "上海",
-              value: "sh",
-            },
-          ],
-        },
-      ],
-      checkArr: [],
-      form: {
-        color: {
-          title: "颜色",
-          arr: [
-            {
-              name: "白色",
-              checked: false,
-            },
-            {
-              name: "黑色",
-              checked: false,
-            },
-            {
-              name: "蓝色",
-              checked: false,
-            },
-            {
-              name: "紫色",
-              checked: false,
-            },
-          ],
-        },
-        caizhi: {
-          title: "材质",
-          arr: [
-            {
-              name: "铁质",
-              checked: false,
-            },
-            {
-              name: "木质",
-              checked: false,
-            },
-            {
-              name: "竹质",
-              checked: false,
-            },
-          ],
-        },
-        container: {
-          title: "容量",
-          arr: [
-            {
-              name: "300ML",
-              checked: false,
-            },
-            {
-              name: "500ML",
-              checked: false,
-            },
-          ],
-        },
-      },
+      currentId: 0,
     };
   },
   created() {
-    //请求商品列表
-    // this.getTopShop();
+    this.getList();
   },
   methods: {
-    // async getTopShop() {
-    //   const res = await instance.get("/main/shop/sale");
-    //   //   this.product = list;
-    //   console.log(res);
-    // },
-    submit() {
-      console.log(this.checkArr);
+    getList() {
+      this.loading = true;
+      const { page, limit, username } = this;
+      instance
+        .get("/user/list", {
+          params: {
+            page,
+            limit,
+            username,
+          },
+        })
+        .then(({ data:{data} }) => {
+          this.list = data.list;
+          this.total = data.total;
+          this.loading = false;
+        });
+    },
+    onSizeChange(limit) {
+      this.limit = limit;
+      this.page = 0;
+      this.getList();
+    },
+    onPageChange(page) {
+      this.page = page - 1;
+      this.getList();
+    },
+    search() {
+      this.page = 0;
+      this.getList();
+    },
+    add() {
+      this.show.add = true;
+    },
+    edit(id) {
+      this.show.edit = true;
+      this.currentId = id;
+    },
+    reset(id) {
+      this.show.reset = true;
+      this.currentId = id;
+    },
+    del(id) {
+      this.$confirm("信息删除不可恢复，确认操作？", {
+        confirmButtonText: "确认删除",
+        cancelButtonText: "暂不操作",
+        type: "warning",
+      })
+        .then(() => {
+          instance
+            .post("/user/delete", {
+              id,
+            })
+            .then(({data:{ errcode }}) => {
+              if (!errcode) {
+                this.$message.success("删除成功!");
+                this.getList();
+              }
+            });
+        })
+        .catch(() => {});
+    },
+    onConfirm() {
+      this.username = "";
+      this.page = 0;
+      this.getList();
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="sass">
+.user-list
+  .form
+    padding-bottom: 20px
+    .el-input
+      width: 200px
+      margin-right: 10px
+  .b
+    padding-top: 20px
+    text-align: right
+  .el-table
+    .el-avatar
+      display: block
+      margin: 0 auto
+      border-radius: 4px
+      background-repeat: no-repeat
+      background-position: center
+      background-size: cover
+    .el-tag + .el-tag
+      margin-left: 7px
+    .el-tag--small
+      padding: 0 5px
+    .contact
+      white-space: nowrap
+      i
+        margin-right: 5px
+        color: #909399
+</style>

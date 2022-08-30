@@ -35,7 +35,8 @@ export default {
           const menu = deepTree(authRoutes)[0].children;
           // console.log(menu);
           const m = filterMenus(menu,data.data.permissions);
-          // authRoutes.forEach((r) => router.addRoute(r));
+          authRoutes.forEach((r) => router.addRoute(r));
+          // router.addRoute(authRoutes);
           commit("setMenus", m);
           return true;
         } else {

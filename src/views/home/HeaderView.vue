@@ -12,7 +12,7 @@
         ></i>
 
         <el-breadcrumb separator="/">
-          <transition-group tag="div" name="animation">
+          <!-- <transition-group tag="div" name="animation"> -->
             <el-breadcrumb-item
               v-for="(item, index) in levelList"
               :key="index"
@@ -20,7 +20,7 @@
             >
               {{ item.meta.pathName }}
             </el-breadcrumb-item>
-          </transition-group>
+          <!-- </transition-group> -->
         </el-breadcrumb>
       </div>
       <div class="rightTip">
