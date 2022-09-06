@@ -26,7 +26,7 @@ export default {
     }
   },
   actions: {
-    getUser({ commit }) {
+    getUser({ commit}) {
       //获取用户权限
       return instance.get("/who").then(({data:data}) => {
         if (!data.errcode) {

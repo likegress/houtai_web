@@ -10,7 +10,7 @@
     <el-form ref="form" :model="formData" :rules="rules" label-width="80px">
       <el-form-item label="审核意见" prop="approve">
         <el-radio-group v-model="formData.approve">
-          <el-radio :label="true" border>审核通过</el-radio></el-radio>
+          <el-radio :label="true" border>审核通过</el-radio>
           <el-radio :label="false" border>审核拒绝</el-radio>
         </el-radio-group>
       </el-form-item>

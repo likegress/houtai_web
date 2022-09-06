@@ -3,6 +3,8 @@ import Vuex from "vuex";
 import shop from "@/store/modules/shop"
 import user from "@/store/modules/user"
 import createPersistedState from "vuex-persistedstate";
+//引入tab数据
+import { data } from "@/plugin/data";
 
 Vue.use(Vuex);
 
@@ -12,6 +14,7 @@ export default new Vuex.Store({
     routes: [], //存放面包屑导航的数组
     routesDefault: null,
     breadFlag: true, //面包屑的动画
+    dataList: data, //tab数据
   },
   getters: {},
   mutations: {

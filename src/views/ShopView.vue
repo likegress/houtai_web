@@ -47,10 +47,16 @@
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
-      row-key="id"
+      :row-key="(row) => row.id"
       ref="dragTable"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column align="center" type="selection" width="55" />
+      <el-table-column
+        align="center"
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
 
       <el-table-column
         align="center"
@@ -61,27 +67,42 @@
         width="100"
       >
       </el-table-column>
-      <el-table-column align="center" prop="date" label="年份" width="200">
+      <el-table-column
+        align="center"
+        prop="date"
+        label="年份"
+        width="200"
+        :reserve-selection="true"
+      >
       </el-table-column>
       <el-table-column
         align="center"
         prop="title"
         label="标题"
         width="500"
+        :reserve-selection="true"
       ></el-table-column>
       <el-table-column
         align="center"
         prop="author"
         label="作者"
         width="100"
+        :reserve-selection="true"
       ></el-table-column>
       <el-table-column
         align="center"
         prop="price"
         label="价格"
         width="100"
+        :reserve-selection="true"
       ></el-table-column>
-      <el-table-column align="center" prop="star" label="评分" width="120">
+      <el-table-column
+        align="center"
+        prop="star"
+        label="评分"
+        width="120"
+        :reserve-selection="true"
+      >
         <template slot-scope="scope">
           <div class="stars">
             <i
@@ -94,7 +115,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="150">
+      <el-table-column
+        align="center"
+        label="操作"
+        width="150"
+        :reserve-selection="true"
+      >
         <template slot-scope="scope">
           <div class="btns">
             <el-button size="mini" type="primary" @click.stop="updateFn(scope)"
@@ -248,6 +274,8 @@ export default {
     });
   },
   methods: {
+    //表而过回显
+    handleSelectionChange() {},
     //设置表格的样式
     cellStyle({ row, column, rowIndex, columnIndex }) {
       let style = { padding: "6px" };
