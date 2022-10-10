@@ -19,8 +19,8 @@
       </template>
     </pro-table>
 
-    <!-- <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form> -->
-    <!-- <pro-form :list="formList" v-model="formData"></pro-form> -->
+    <!-- <pro-form :value="formData" :list="formList" @input="formData = $event"></pro-form>
+    <pro-form :list="formList" v-model="formData"></pro-form> -->
     <div class="form">
       <div v-for="d in form" :key="d.title">
         <div>{{ d.title }}:</div>

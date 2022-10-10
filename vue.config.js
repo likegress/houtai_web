@@ -4,10 +4,11 @@ console.log(API);
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+  publicPath: "",
   devServer: {
     proxy: {
       "/api": {
-        target: "http://shop.datong0.com",
+        target: API ,
         changeOrigin: true,
         pathReWrite: {
           "^/api": "",
